@@ -1,0 +1,12 @@
+flask
+flask-sqlalchemy
+flask-login
+flask-mail
+flask-limiter
+bcrypt
+pyotp
+qrcode[pil]
+bleach
+gunicorn
+python-dotenv
+psycopg2-binary
