@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}Edit Users{% endblock %}
+{% block extra_head %}
+<style>
+.table-dark-glass {
+    background: rgba(255,255,255,0.06); border-radius: 14px;
+    overflow: hidden; border: 1px solid rgba(255,255,255,0.08);
+}
+.table-dark-glass table { background: transparent; color: #e4e6eb; }
+.table-dark-glass thead { background: rgba(0,0,0,0.3); }
+.table-dark-glass tbody tr:hover { background: rgba(255,255,255,0.04); }
+.table-dark-glass td, .table-dark-glass th { border-color: rgba(255,255,255,0.06); }
+.form-select-dark {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+    color: white; border-radius: 6px; padding: 4px 8px; font-size: 0.85rem;
+}
+.form-select-dark option { background: #0a1f33; color: white; }
+</style>
+{% endblock %}
+{% block content %}
+
+<div class="sidebar">
+    <div class="logo">
+        <img src="{{ url_for('static', filename='secure.png') }}">
+    </div>
+    <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('edit_users') }}" class="active">User Management</a>
+    <a href="{{ url_for('admin_invite') }}">Send Invite</a>
+    <a href="{{ url_for('view_logs') }}">System Logs</a>
+    <a href="{{ url_for('two_fa_setup') }}">Setup 2FA</a>
+    <a href="{{ url_for('Logout') }}">Logout</a>
+</div>
+
+<div class="main">
+
+    <div class="topbar">
+        <h5 style="margin:0;">User Management</h5>
+        <a href="{{ url_for('admin_invite') }}" class="btn btn-primary btn-sm">+ Invite User</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="toast-container">
+    {% for category, message in messages %}
+    <div class="toast show text-bg-{{ 'success' if category=='success' else 'danger' }} mb-2">
+        <div class="d-flex">
+            <div class="toast-body">{{ message }}</div>
+            <button class="btn-close btn-close-white m-auto me-2" onclick="this.parentElement.parentElement.remove()"></button>
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Summary -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card" style="background:linear-gradient(135deg,#4e73df,#224abe);">
+                <div class="num">{{ users|length }}</div>
+                <div class="label">Total Users</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="background:linear-gradient(135deg,#e74a3b,#c0392b);">
+                <div class="num">{{ users|selectattr('role','equalto','admin')|list|length }}</div>
+                <div class="label">Admins</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="background:linear-gradient(135deg,#f6c23e,#dda20a);">
+                <div class="num">{{ users|selectattr('role','equalto','manager')|list|length }}</div>
+                <div class="label">Managers</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="background:linear-gradient(135deg,#1cc88a,#13855c);">
+                <div class="num">{{ users|selectattr('role','equalto','employee')|list|length }}</div>
+                <div class="label">Employees</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users table -->
+    <div class="table-dark-glass">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>2FA</th><th>Change Role</th><th>Delete</th></tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+            <tr>
+                <td><small style="opacity:0.5;">{{ user.id }}</small></td>
+                <td>
+                    <strong>{{ user.username }}</strong>
+                    {% if user.id == current_user.id %}
+                        <span class="badge bg-primary ms-1">You</span>
+                    {% endif %}
+                </td>
+                <td><small style="opacity:0.7;">{{ user.email }}</small></td>
+                <td>
+                    {% if user.role == 'admin' %}<span class="badge bg-danger">admin</span>
+                    {% elif user.role == 'manager' %}<span class="badge bg-warning text-dark">manager</span>
+                    {% else %}<span class="badge bg-secondary">employee</span>{% endif %}
+                </td>
+                <td>
+                    {% if user.two_fa_enabled %}<span class="badge bg-success">✔ On</span>
+                    {% else %}<span class="badge bg-secondary">Off</span>{% endif %}
+                </td>
+                <td>
+                    {% if user.id != current_user.id %}
+                    <form method="POST" class="d-flex gap-1">
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        <input type="hidden" name="action" value="update_role">
+                        <select name="role" class="form-select-dark" style="width:100px;">
+                            <option value="employee" {% if user.role=='employee' %}selected{% endif %}>Employee</option>
+                            <option value="manager" {% if user.role=='manager' %}selected{% endif %}>Manager</option>
+                            <option value="admin" {% if user.role=='admin' %}selected{% endif %}>Admin</option>
+                        </select>
+                        <button class="btn btn-sm btn-outline-light">Save</button>
+                    </form>
+                    {% else %}<span style="opacity:0.4;">—</span>{% endif %}
+                </td>
+                <td>
+                    {% if user.id != current_user.id %}
+                    <form method="POST" onsubmit="return confirm('Delete {{ user.username }}? This cannot be undone.');">
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        <input type="hidden" name="action" value="delete">
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                    {% else %}<span style="opacity:0.4;">—</span>{% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" class="text-center py-5" style="opacity:0.5;">No users found.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+{% block extra_js %}
+<script>setTimeout(()=>document.querySelectorAll('.toast').forEach(t=>t.remove()),3000)</script>
+{% endblock %}
