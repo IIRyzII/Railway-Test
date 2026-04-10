@@ -56,25 +56,25 @@
     <!-- Summary -->
     <div class="row g-3 mb-4">
         <div class="col-md-3">
-            <div class="stat-card" style="background:linear-gradient(135deg,#4e73df,#224abe);">
+            <div class="stat-card" style="background:linear-gradient(135deg,#0a1f33,#114e86);">
                 <div class="num">{{ users|length }}</div>
                 <div class="label">Total Users</div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stat-card" style="background:linear-gradient(135deg,#e74a3b,#c0392b);">
+            <div class="stat-card" style="background:linear-gradient(135deg,#0a1f33,#114e86);">
                 <div class="num">{{ users|selectattr('role','equalto','admin')|list|length }}</div>
                 <div class="label">Admins</div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stat-card" style="background:linear-gradient(135deg,#f6c23e,#dda20a);">
+            <div class="stat-card" style="background:linear-gradient(135deg,#0a1f33,#114e86);">
                 <div class="num">{{ users|selectattr('role','equalto','manager')|list|length }}</div>
                 <div class="label">Managers</div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stat-card" style="background:linear-gradient(135deg,#1cc88a,#13855c);">
+            <div class="stat-card" style="background:linear-gradient(135deg,#0a1f33,#114e86);">
                 <div class="num">{{ users|selectattr('role','equalto','employee')|list|length }}</div>
                 <div class="label">Employees</div>
             </div>
