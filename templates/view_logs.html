@@ -37,25 +37,25 @@
     <!-- Summary cards -->
     <div class="row g-3 mb-4">
         <div class="col-md-3">
-            <div class="stat-card" style="background:linear-gradient(135deg,#4e73df,#224abe);">
+            <div class="stat-card" style="background:linear-gradient(135deg,#2aa13e,#114e86);">
                 <div class="num">{{ logs|length }}</div>
                 <div class="label">Total Events</div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stat-card" style="background:linear-gradient(135deg,#1cc88a,#13855c);">
+            <div class="stat-card" style="background:linear-gradient(135deg,#2aa13e,#114e86);">
                 <div class="num">{{ logs|selectattr('success')|list|length }}</div>
                 <div class="label">Successful Logins</div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stat-card" style="background:linear-gradient(135deg,#f6c23e,#dda20a);">
+            <div class="stat-card" style="background:linear-gradient(135deg,#2aa13e,#114e86);">
                 <div class="num">{{ logs|rejectattr('success')|list|length }}</div>
                 <div class="label">Failed Attempts</div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stat-card" style="background:linear-gradient(135deg,#e74a3b,#c0392b);">
+            <div class="stat-card" style="background:linear-gradient(135deg,#2aa13e,#114e86);">
                 <div class="num">{{ logs|selectattr('sql_flagged')|list|length }}</div>
                 <div class="label">SQL Alerts</div>
             </div>
