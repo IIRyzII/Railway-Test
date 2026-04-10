@@ -569,30 +569,6 @@ def edit_users():
 
     users = User.query.order_by(User.role, User.username).all()
     return render_template("edit_users.html", users=users)
-# ── One-time admin setup (only works when zero users exist) ───────────────────
-@app.route("/setup-admin", methods=["GET", "POST"])
-def setup_admin():
-    if User.query.first() is not None:
-        abort(404)
-    if request.method == "POST":
-        username = clean_username(request.form.get("username", ""))
-        email = request.form.get("email", "")
-        password = request.form.get("password", "")
-        if username and email and password:
-            user = User(username=username, email=email, role="admin")
-            user.set_password(password)
-            db.session.add(user)
-            db.session.commit()
-            flash("Admin created! Please log in.", "success")
-            return redirect(url_for("LoginPage"))
-    return '''
-    <form method="POST" style="max-width:400px;margin:80px auto;font-family:sans-serif;">
-        <h3>Create First Admin</h3>
-        <input name="username" placeholder="Username" required style="display:block;width:100%;margin:10px 0;padding:8px;">
-        <input name="email" placeholder="Email" required style="display:block;width:100%;margin:10px 0;padding:8px;">
-        <input name="password" type="password" placeholder="Password (min 8 chars)" required style="display:block;width:100%;margin:10px 0;padding:8px;">
-        <button type="submit" style="padding:10px 20px;">Create Admin</button>
-    </form>'''
 
 # ── Startup ───────────────────────────────────────────────────────────────────
 with app.app_context():
