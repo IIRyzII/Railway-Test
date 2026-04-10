@@ -67,12 +67,14 @@
     {% endwith %}
 
     <!-- Invite form -->
-    <div class="invite-form mb-4" style="max-width:600px;">
+    <div class="d-flex justify-content-center">
+    <div class="invite-form mb-4" style="max-width:600px;width:100%;">
         <h5 class="fw-bold mb-1">Invite a New User</h5>
         <p style="opacity:0.6;font-size:0.9rem;" class="mb-3">
             An email will be sent with a single-use link valid for {{ config.get('INVITE_EXPIRY_HOURS', 1) }} hours.
         </p>
         <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <div class="mb-3">
                 <label class="form-label" style="opacity:0.8;">Email address</label>
                 <input name="email" type="email" class="form-control-dark" placeholder="employee@company.com" required>
@@ -88,8 +90,11 @@
             <button type="submit" class="btn btn-primary w-100" style="padding:12px;">Send Invitation</button>
         </form>
     </div>
+    </div>
 
     <!-- Pending invites -->
+    <div class="d-flex justify-content-center">
+    <div style="max-width:600px;width:100%;">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h6 class="mb-0" style="opacity:0.7;">Pending Invitations</h6>
         <span class="badge bg-secondary">{{ pending|length }}</span>
@@ -117,6 +122,7 @@
                 <td>
                     <form method="POST" action="{{ url_for('admin_revoke_invite', invite_id=inv.id) }}"
                           onsubmit="return confirm('Revoke this invite?');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                         <button class="btn btn-danger btn-sm">Revoke</button>
                     </form>
                 </td>
@@ -126,6 +132,8 @@
             {% endfor %}
             </tbody>
         </table>
+    </div>
+    </div>
     </div>
 </div>
 
